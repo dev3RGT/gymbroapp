@@ -60,6 +60,18 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:'Barlow',sans-serif
 .t-red{color:var(--red);}
 .t-white{color:#fff;}
 
+/* ── GOOGLE AUTH ── */
+#google-auth{position:absolute;inset:0;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:10000;padding:40px 28px;}
+#google-auth .ga-icon{width:72px;height:72px;background:var(--red);border-radius:20px;display:flex;align-items:center;justify-content:center;margin-bottom:16px;}
+#google-auth .ga-icon svg{width:40px;height:40px;fill:#fff;}
+#google-auth .ga-wordmark{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:42px;color:#fff;text-transform:uppercase;letter-spacing:-1px;margin-bottom:6px;}
+#google-auth .ga-sub{font-size:13px;color:#555;letter-spacing:2px;text-transform:uppercase;margin-bottom:56px;}
+#google-auth .ga-btn{width:100%;max-width:320px;height:56px;background:#fff;border:none;border-radius:16px;display:flex;align-items:center;justify-content:center;gap:12px;font-family:'Barlow',sans-serif;font-size:16px;font-weight:700;color:#111;cursor:pointer;transition:opacity .15s;}
+#google-auth .ga-btn:active{opacity:.85;}
+#google-auth .ga-err{margin-top:16px;width:100%;max-width:320px;background:rgba(185,28,28,.15);border:1px solid rgba(185,28,28,.3);border-radius:10px;padding:10px 14px;font-size:13px;color:#f87171;display:none;text-align:center;}
+#google-auth .ga-err.show{display:block;}
+#google-auth .ga-loading{margin-top:16px;font-size:14px;color:#555;display:none;}
+
 /* ── SPLASH ── */
 #splash{position:absolute;inset:0;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;transition:opacity .5s ease;}
 #splash.hide{opacity:0;pointer-events:none;}
@@ -107,7 +119,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:'Barlow',sans-serif
 .ob-goal-label{font-size:13px;font-weight:700;color:#ccc;}
 .ob-goal-card.sel .ob-goal-label{color:#fff;}
 
-/* ── AUTH ── */
+/* ── AUTH (legacy — kept for CSS classes only) ── */
 #auth-screen{position:absolute;inset:0;background:#000;z-index:998;display:flex;flex-direction:column;padding:56px 28px 40px;align-items:stretch;overflow-y:auto;}
 .auth-logo{display:flex;align-items:center;gap:10px;margin-bottom:48px;}
 .auth-logo-icon{width:40px;height:40px;background:var(--red);border-radius:10px;display:flex;align-items:center;justify-content:center;}
@@ -552,8 +564,23 @@ scrollbar-width:none;
 <body>
 <div id="app">
 
-<!-- SPLASH -->
-<div id="splash">
+<!-- GOOGLE AUTH — shown first, z-index 10000 -->
+<div id="google-auth">
+  <div class="ga-icon">
+    <svg viewBox="0 0 40 40"><path d="M6 20 Q6 14 10 11 L10 10 L14 10 L14 12 Q16 10 20 10 Q24 10 26 12 L26 10 L30 10 L30 11 Q34 14 34 20 Q34 26 30 29 L30 30 L26 30 L26 28 Q24 30 20 30 Q16 30 14 28 L14 30 L10 30 L10 29 Q6 26 6 20Z"/></svg>
+  </div>
+  <div class="ga-wordmark">Gym Bro</div>
+  <div class="ga-sub">Train. Track. Dominate.</div>
+  <button class="ga-btn" onclick="doGoogle()">
+    <svg width="22" height="22" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+    Continue with Google
+  </button>
+  <div class="ga-err" id="ga-err"></div>
+  <div class="ga-loading" id="ga-loading">Signing in...</div>
+</div>
+
+<!-- SPLASH — hidden by default, shown after Google auth succeeds -->
+<div id="splash" style="display:none;">
   <div class="splash-logo">
     <div class="splash-icon">
       <svg viewBox="0 0 40 40"><path d="M6 20 Q6 14 10 11 L10 10 L14 10 L14 12 Q16 10 20 10 Q24 10 26 12 L26 10 L30 10 L30 11 Q34 14 34 20 Q34 26 30 29 L30 30 L26 30 L26 28 Q24 30 20 30 Q16 30 14 28 L14 30 L10 30 L10 29 Q6 26 6 20Z"/></svg>
@@ -645,42 +672,6 @@ scrollbar-width:none;
         </div>
       </div>
     </div>
-  </div>
-</div>
-
-<!-- AUTH -->
-<div id="auth-screen" style="display:none;flex:1;flex-direction:column;overflow-y:auto;">
-  <div class="auth-logo">
-    <div class="auth-logo-icon"><svg viewBox="0 0 40 40"><path d="M6 20 Q6 14 10 11 L10 10 L14 10 L14 12 Q16 10 20 10 Q24 10 26 12 L26 10 L30 10 L30 11 Q34 14 34 20 Q34 26 30 29 L30 30 L26 30 L26 28 Q24 30 20 30 Q16 30 14 28 L14 30 L10 30 L10 29 Q6 26 6 20Z"/></svg></div>
-    <div class="auth-logo-text">Gym Bro</div>
-  </div>
-  <div id="auth-err" class="auth-err"></div>
-  <div id="auth-login-view">
-    <div class="auth-title">Sign In</div>
-    <div class="auth-sub">Welcome back, bro 👊</div>
-    <div class="auth-field"><label>Email</label><input type="email" id="login-email" placeholder="you@email.com"></div>
-    <div class="auth-field"><label>Password</label><input type="password" id="login-password" placeholder="••••••••"></div>
-    <button class="auth-btn" onclick="doLogin()">Sign In</button>
-    <div class="auth-divider"><span>OR</span></div>
-    <div class="auth-google" onclick="doGoogle()">
-      <svg class="auth-google-icon" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-      Continue with Google
-    </div>
-    <div class="auth-switch">Don't have an account? <a onclick="showSignup()">Sign Up</a></div>
-  </div>
-  <div id="auth-signup-view" style="display:none;">
-    <div class="auth-title">Create Account</div>
-    <div class="auth-sub">Start your journey today</div>
-    <div class="auth-field"><label>Name</label><input type="text" id="signup-name" placeholder="John Doe"></div>
-    <div class="auth-field"><label>Email</label><input type="email" id="signup-email" placeholder="you@email.com"></div>
-    <div class="auth-field"><label>Password</label><input type="password" id="signup-password" placeholder="Min. 6 characters"></div>
-    <button class="auth-btn" onclick="doSignup()">Create Account</button>
-    <div class="auth-divider"><span>OR</span></div>
-    <div class="auth-google" onclick="doGoogle()">
-      <svg class="auth-google-icon" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-      Continue with Google
-    </div>
-    <div class="auth-switch">Already have an account? <a onclick="showLogin()">Sign In</a></div>
   </div>
 </div>
 
@@ -1337,35 +1328,49 @@ const STREAK_MSGS = ['Start your streak!','1 day in — let\'s go!','2 days stro
 // ══════════════════════════════════════════════
 // INIT & AUTH
 // ══════════════════════════════════════════════
-setTimeout(() => {
-  document.getElementById('splash').classList.add('hide');
-  setTimeout(() => { document.getElementById('splash').style.display='none'; }, 500);
-  const seen = localStorage.getItem('gb_onboarding_done');
-  if (!seen) {
-    document.getElementById('onboarding').style.display='flex';
-  } else {
-    checkAuth();
-  }
-}, 1800);
-
 auth.onAuthStateChanged(user => {
   if (user) {
     currentUser = user;
-    loadUserProfile().then(() => {
-      document.getElementById('auth-screen').style.display = 'none';
-      document.getElementById('main-app').style.display = 'flex';
-      initApp();
-    });
+    // Hide Google auth, show splash
+    document.getElementById('google-auth').style.display = 'none';
+    document.getElementById('splash').style.display = 'flex';
+    // Play splash then load into app
+    setTimeout(() => {
+      document.getElementById('splash').classList.add('hide');
+      setTimeout(() => { document.getElementById('splash').style.display = 'none'; }, 500);
+      loadUserProfile().then(() => {
+        const seen = localStorage.getItem('gb_onboarding_done');
+        if (!seen) {
+          document.getElementById('onboarding').style.display = 'flex';
+        } else {
+          document.getElementById('main-app').style.display = 'flex';
+          initApp();
+        }
+      });
+    }, 1800);
   } else {
-    // Not signed in — show auth if splash has already dismissed
-    if (document.getElementById('splash').style.display === 'none') {
-      checkAuth();
-    }
+    // Not signed in — show Google auth screen
+    currentUser = null;
+    document.getElementById('google-auth').style.display = 'flex';
+    document.getElementById('splash').style.display = 'none';
+    document.getElementById('onboarding').style.display = 'none';
+    document.getElementById('main-app').style.display = 'none';
+    document.getElementById('ga-loading').style.display = 'none';
   }
 });
 
-function checkAuth() {
-  document.getElementById('auth-screen').style.display = 'flex';
+async function doGoogle() {
+  document.getElementById('ga-loading').style.display = 'block';
+  document.getElementById('ga-err').classList.remove('show');
+  const provider = new firebase.auth.GoogleAuthProvider();
+  try {
+    await auth.signInWithPopup(provider);
+  } catch(e) {
+    document.getElementById('ga-loading').style.display = 'none';
+    const errEl = document.getElementById('ga-err');
+    errEl.textContent = e.message.replace('Firebase: ','').replace(/\(.*\)/,'').trim();
+    errEl.classList.add('show');
+  }
 }
 
 async function loadUserProfile() {
@@ -1388,8 +1393,13 @@ async function loadUserProfile() {
       await db.collection('users').doc(currentUser.uid).set(userProfile);
     }
   } catch(e) {
-    userProfile = { name:'Athlete', streak:0, totalWorkouts:0, prs:{}, measurements:[] };
+    userProfile = { name: currentUser.displayName || 'Athlete', streak:0, totalWorkouts:0, prs:{}, measurements:[] };
   }
+}
+
+async function doLogout() {
+  await auth.signOut();
+  location.reload();
 }
 
 // ══════════════════════════════════════════════
@@ -1413,7 +1423,8 @@ function selectGoal(el) {
 function skipOnboarding() {
   localStorage.setItem('gb_onboarding_done','1');
   document.getElementById('onboarding').style.display='none';
-  checkAuth();
+  document.getElementById('main-app').style.display='flex';
+  initApp();
 }
 function finishOnboarding() {
   const name = document.getElementById('ob-name').value.trim() || 'Athlete';
@@ -1424,56 +1435,8 @@ function finishOnboarding() {
   localStorage.setItem('gb_onboarding_goal', goalEl ? goalEl.textContent : 'Muscle Gain');
   localStorage.setItem('gb_onboarding_done','1');
   document.getElementById('onboarding').style.display='none';
-  checkAuth();
-}
-
-// ══════════════════════════════════════════════
-// AUTH ACTIONS
-// ══════════════════════════════════════════════
-function showSignup() { document.getElementById('auth-login-view').style.display='none'; document.getElementById('auth-signup-view').style.display='block'; }
-function showLogin() { document.getElementById('auth-signup-view').style.display='none'; document.getElementById('auth-login-view').style.display='block'; }
-function authError(msg) { const e=document.getElementById('auth-err'); e.textContent=msg; e.classList.add('show'); }
-
-async function doLogin() {
-  const email = document.getElementById('login-email').value;
-  const pass = document.getElementById('login-password').value;
-  if (!email || !pass) { authError('Please fill in all fields.'); return; }
-  try {
-    await auth.signInWithEmailAndPassword(email, pass);
-  } catch(e) {
-    authError(e.message.replace('Firebase: ','').replace(/\(.*\)/,''));
-  }
-}
-async function doSignup() {
-  const name = document.getElementById('signup-name').value.trim() || 'Athlete';
-  const email = document.getElementById('signup-email').value;
-  const pass = document.getElementById('signup-password').value;
-  if (!email || !pass) { authError('Please fill in all fields.'); return; }
-  try {
-    const cred = await auth.createUserWithEmailAndPassword(email, pass);
-    await cred.user.updateProfile({ displayName: name });
-    const savedGoal = localStorage.getItem('gb_onboarding_goal') || 'Muscle Gain';
-    const savedLevel = localStorage.getItem('gb_onboarding_level') || 'Intermediate';
-    await db.collection('users').doc(cred.user.uid).set({
-      name, email, level: savedLevel, goal: savedGoal,
-      streak: 0, totalWorkouts: 0, prs: {}, measurements: [],
-      createdAt: new Date().toISOString()
-    });
-  } catch(e) {
-    authError(e.message.replace('Firebase: ','').replace(/\(.*\)/,''));
-  }
-}
-async function doGoogle() {
-  const provider = new firebase.auth.GoogleAuthProvider();
-  try {
-    await auth.signInWithPopup(provider);
-  } catch(e) {
-    authError(e.message.replace('Firebase: ','').replace(/\(.*\)/,''));
-  }
-}
-async function doLogout() {
-  await auth.signOut();
-  location.reload();
+  document.getElementById('main-app').style.display='flex';
+  initApp();
 }
 
 // ══════════════════════════════════════════════
@@ -1505,7 +1468,7 @@ function updateHomeUI() {
   document.getElementById('profile-goal-badge').textContent = `💪 ${userProfile.goal || 'Muscle Gain'}`;
   const streak = userProfile.streak || 0;
   document.getElementById('home-streak').textContent = streak;
-  document.getElementById('streak-count').textContent = `${streak} Day${streak !== 1 ? 's':''}`; 
+  document.getElementById('streak-count').textContent = `${streak} Day${streak !== 1 ? 's':''}`;
   document.getElementById('streak-msg').textContent = STREAK_MSGS[Math.min(streak, STREAK_MSGS.length-1)];
   const tw = userProfile.totalWorkouts || 0;
   document.getElementById('home-total-workouts').textContent = tw;
@@ -2044,27 +2007,22 @@ function drawBody(canvas, side) {
   const ctx = canvas.getContext('2d');
   ctx.clearRect(0,0,100,200);
   ctx.strokeStyle = '#e5e5e5'; ctx.lineWidth = 1.5; ctx.fillStyle = '#f5f5f5';
-  // Head
   ctx.beginPath(); ctx.arc(50,16,12,0,Math.PI*2); ctx.fill(); ctx.stroke();
-  // Torso
   ctx.beginPath(); ctx.roundRect(28,32,44,60,4); ctx.fill(); ctx.stroke();
-  // Arms
   ctx.beginPath(); ctx.roundRect(12,32,14,50,4); ctx.fill(); ctx.stroke();
   ctx.beginPath(); ctx.roundRect(74,32,14,50,4); ctx.fill(); ctx.stroke();
-  // Legs
   ctx.beginPath(); ctx.roundRect(28,96,20,70,4); ctx.fill(); ctx.stroke();
   ctx.beginPath(); ctx.roundRect(52,96,20,70,4); ctx.fill(); ctx.stroke();
-  // Muscle highlight (simple)
   if (side === 'front') {
     ctx.fillStyle = 'rgba(185,28,28,0.35)';
-    ctx.beginPath(); ctx.roundRect(30,34,40,24,3); ctx.fill(); // chest
+    ctx.beginPath(); ctx.roundRect(30,34,40,24,3); ctx.fill();
     ctx.fillStyle = 'rgba(185,28,28,0.2)';
-    ctx.beginPath(); ctx.roundRect(30,60,40,30,3); ctx.fill(); // abs
+    ctx.beginPath(); ctx.roundRect(30,60,40,30,3); ctx.fill();
   } else {
     ctx.fillStyle = 'rgba(29,78,216,0.3)';
-    ctx.beginPath(); ctx.roundRect(30,34,40,30,3); ctx.fill(); // back
+    ctx.beginPath(); ctx.roundRect(30,34,40,30,3); ctx.fill();
     ctx.fillStyle = 'rgba(5,150,105,0.25)';
-    ctx.beginPath(); ctx.roundRect(28,100,20,35,3); ctx.fill(); // hamstrings
+    ctx.beginPath(); ctx.roundRect(28,100,20,35,3); ctx.fill();
     ctx.beginPath(); ctx.roundRect(52,100,20,35,3); ctx.fill();
   }
 }
@@ -2313,7 +2271,6 @@ function switchTab(tab) {
   if (tab === 'progress') setTimeout(()=>{renderProgress();initCharts();},100);
   if (tab === 'community') renderCommunity();
 }
-// Add community/exercises nav items implicitly by tab buttons
 
 // ══════════════════════════════════════════════
 // SHEETS
@@ -2344,17 +2301,8 @@ function showToast(msg, type='success') {
   setTimeout(() => { toast.classList.add('hide'); setTimeout(()=>toast.remove(),300); }, 3000);
 }
 
-// ══════════════════════════════════════════════
-// COMMUNITY NAV BUTTON (override nav)
-// ══════════════════════════════════════════════
-document.addEventListener('DOMContentLoaded', () => {
-  // Patch nav: swap the exercises tab into nav somehow? We hide "exercises" in the nav
-  // and let users reach it from the workout screen or quick-action. The 5-item nav is Home/Workout/[FAB]/Progress/Profile.
-  // Community is accessible via Home "Community" quick-action (we'll handle that)
-});
-
-// Allow community tab switch from any button not in the nav
-// Override existing nav to also show exercises when tapping search area
+// Stub for saveLogSet (log-set-sheet)
+function saveLogSet() { closeSheet('log-set-sheet'); startRestTimer(); }
 </script>
 </body>
 </html>
