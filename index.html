@@ -1359,6 +1359,25 @@ auth.onAuthStateChanged(user => {
   }
 });
 
+// Handle Google redirect result (fires after signInWithRedirect returns)
+auth.getRedirectResult().then(result => {
+  if (result && result.user) {
+    // onAuthStateChanged will fire automatically — nothing else needed here
+    document.getElementById('ga-loading').style.display = 'none';
+  }
+}).catch(e => {
+  if (e.code && e.code !== 'auth/no-auth-event') {
+    document.getElementById('ga-loading').style.display = 'none';
+    const errEl = document.getElementById('ga-err');
+    errEl.textContent = e.message.replace('Firebase: ','').replace(/\(.*\)/,'').trim();
+    errEl.classList.add('show');
+  }
+});
+
+
+  
+
+// NEW — tries popup, falls back to redirect on mobile/blocked environments
 async function doGoogle() {
   document.getElementById('ga-loading').style.display = 'block';
   document.getElementById('ga-err').classList.remove('show');
@@ -1366,6 +1385,22 @@ async function doGoogle() {
   try {
     await auth.signInWithPopup(provider);
   } catch(e) {
+    // Popup blocked or not supported — fall back to redirect
+    if (e.code === 'auth/popup-blocked' ||
+        e.code === 'auth/popup-closed-by-user' ||
+        e.code === 'auth/cancelled-popup-request' ||
+        e.code === 'auth/unauthorized-domain') {
+      try {
+        await auth.signInWithRedirect(provider);
+        return; // page will reload after redirect
+      } catch(e2) {
+        document.getElementById('ga-loading').style.display = 'none';
+        const errEl = document.getElementById('ga-err');
+        errEl.textContent = e2.message.replace('Firebase: ','').replace(/\(.*\)/,'').trim();
+        errEl.classList.add('show');
+        return;
+      }
+    }
     document.getElementById('ga-loading').style.display = 'none';
     const errEl = document.getElementById('ga-err');
     errEl.textContent = e.message.replace('Firebase: ','').replace(/\(.*\)/,'').trim();
