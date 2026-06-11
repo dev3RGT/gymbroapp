@@ -649,7 +649,7 @@ scrollbar-width:none;
 </div>
 
 <!-- AUTH -->
-<div id="auth-screen" style="display:none;">
+<div id="auth-screen" style="display:none;flex:1;flex-direction:column;overflow-y:auto;">
   <div class="auth-logo">
     <div class="auth-logo-icon"><svg viewBox="0 0 40 40"><path d="M6 20 Q6 14 10 11 L10 10 L14 10 L14 12 Q16 10 20 10 Q24 10 26 12 L26 10 L30 10 L30 11 Q34 14 34 20 Q34 26 30 29 L30 30 L26 30 L26 28 Q24 30 20 30 Q16 30 14 28 L14 30 L10 30 L10 29 Q6 26 6 20Z"/></svg></div>
     <div class="auth-logo-text">Gym Bro</div>
@@ -1358,6 +1358,11 @@ auth.onAuthStateChanged(user => {
       document.getElementById('main-app').style.display = 'flex';
       initApp();
     });
+  } else {
+    // Not signed in — show auth if splash has already dismissed
+    if (document.getElementById('splash').style.display === 'none') {
+      checkAuth();
+    }
   }
 });
 
@@ -1477,6 +1482,7 @@ async function doLogout() {
 // APP INIT
 // ══════════════════════════════════════════════
 function initApp() {
+  switchTab('home');
   updateHomeUI();
   buildDayStrip();
   renderTodayWorkout();
